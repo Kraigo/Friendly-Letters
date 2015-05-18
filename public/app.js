@@ -94,8 +94,10 @@
 			}
 		};
 		this.exitRoom = function() {
-			view('login', {'%playerName%': app.playerName, '%disabled%': ''});
+			var playerName = app.playerName;
+			view('login', {'%playerName%': playerName, '%disabled%': ''});
 			app.initData();
+			app.playerName = playerName;
 		}
 
 
