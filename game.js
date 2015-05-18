@@ -1,5 +1,8 @@
+var fs = require('fs');
+
 var io;
 var gameSocket;
+var words = {};
 
 exports.init = function(sio, socket) {
 	io = sio;
@@ -101,10 +104,21 @@ function shuffle(array) {
 	return array;
 }
 
-var words = {
-	'1': ['a'],
-	'2': ['ёж', 'ад', 'уж', 'юг', 'як'],
-	'3': ['еда', 'сок', 'куб'],
-	'4': ['азот', 'брод', 'бомж']
-}
+(function() {
+	fs.readFile('./words.txt', {encoding: 'utf-8'}, function(err, data) {
+		data = data.replace(/^\uFEFF/, '');
+		var mas = data.split(', ')
+		for (var i = mas.length; i > 0; i--) {
+			var m = mas[i-1]
+
+			if (!words[m.length])
+				words[m.length] = [];
+
+			words[m.length].push(m);
+		};
+
+	});
+
+})();
+
 
