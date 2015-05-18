@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="HandheldFriendly" content="True" />
+
+	<title>Game</title>
+	<script src="/socket.io/socket.io.js"></script>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div class="container">
+		<div id="game-view" class="game">
+
+		</div>
+	</div>
+	
+
+	<script id="login-view" type="text/template">
+		<h1 class="title"><span class="text-red">Friendly</span> <span class="text-blue">Letters</span></h1>
+		<p>
+			<input type="text" class="input" placeholder="Введите имя" onInput="app.validLogin(event)" id="loginInput" value="%playerName%">
+		</p>
+		<div id="login-control" class="%disabled%">
+			<p>
+				<button class="button button-blue" onClick="app.host.createRoom()">Создать игру</button>
+			</p>
+			<p>
+				<button class="button button-violet" onClick="app.joinLobby()">Войти в игру</button>
+			</p>
+		</div>
+	</script>
+
+	<script id="room-view" type="text/template">
+		<p class="text-center">Номер вашей комнаты:</p>
+		<h2 class="text-big">%roomID%</h2>
+		<p class="text-center">Дождитесь новых участников.</p>
+		<p id="roomList" class="room-control %host%"></p >
+		<p class="room-control %host%">
+			<button class="button button-green" onClick="app.host.startRoom()">Запустить игру</button>
+		</p>
+		<p>
+			<button onClick="app.exitRoom()" class="button button-red">Выйти</button>
+		</p>
+		
+	</script>
+
+	<script id="lobby-view" type="text/template">
+		<p class="text-center">Введите номер комнаты:</p>
+		<p>
+			<input type="text" class="input" placeholder="Введите номер" id="roomID"  onInput="app.validRoom(event)">
+		</p>
+		<p id="room-control" class="disabled">
+			<button class="button button-green" onClick="app.host.joinRoom()">Подключиться</button>
+		</p>
+		<p>
+			<button onClick="app.exitRoom()" class="button button-red">Выйти</button>
+		</p>
+		
+	</script>
+
+	<script id="round-view" type="text/template">
+		<div class="round" id="round" onClick="app.roundStep()">
+			<p class="round-letter">%letter%</p>
+		</div>
+		<p class="text-center">Сделайте ход в правильной очередности</p>
+
+		<div id="round-complete" class="modal">
+			<div class="modal-content">
+				<p class="text-center">Вы справились!</p>
+				<p id="round-complete-word" class="text-big"></p><br>
+				<p class="room-control %host%">
+					<button onClick="app.host.startRoom()" class="button button-yellow">Еще раунд</button>
+				</p>
+				<p>
+					<button onClick="app.exitRoom()" class="button button-red">Выйти</button>
+				</p>
+			</div>
+		</div>
+	</script>
+
+	<script src="app.js"></script>
+
+</body>
+</html>
