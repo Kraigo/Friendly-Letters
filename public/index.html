@@ -61,25 +61,31 @@
 	</script>
 
 	<script id="round-view" type="text/template">
-		<div class="round" id="round" onClick="app.roundStep()">
-			<p class="round-letter">%letter%</p>
+		<p class="text-center">Вас cчёт: <span id="roundScore">0</span></p>
+		<div class="round" id="round" onClick="app.roundCollect()">
+			<p class="round-letter" id="roundLetter"></p>
 		</div>
 		<p class="text-center">Сделайте ход в правильной очередности</p>
 
-		<div id="round-complete" class="modal">
-			<div class="modal-content">
-				<p class="text-center">Вы справились!</p>
-				<p id="round-complete-word" class="text-big"></p><br>
-				<p class="room-control %host%">
-					<button onClick="app.host.startRoom()" class="button button-yellow">Еще раунд</button>
-				</p>
-				<p>
-					<button onClick="app.exitRoom()" class="button button-red">Выйти</button>
-				</p>
-			</div>
-		</div>
+		<div id="roundStarter" class="round-starter"></div>
+		<div class="timerLine"></div>
+
 	</script>
 
+	<div id="round-complete" class="modal">
+		<div class="modal-content text-center">
+			<p class="text-title">Игра окончена!</p>
+			<p class="no-margin">Ваш счёт:</p>
+			<p class="text-big"><span id="round-complete-score"></span></p>
+			<p>Количество угаданных слов: <span id="round-complete-count"></span></p>
+			<p class="room-control show">
+				<button onClick="app.restartRoom()" class="button button-yellow">Еще раунд</button>
+			</p>
+			<p>
+				<button onClick="app.exitRoom()" class="button button-red">Выйти</button>
+			</p>
+		</div>
+	</div>
 	<script src="app.js"></script>
 
 </body>

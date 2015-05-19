@@ -32,8 +32,8 @@
 			startRoom: function() {
 				socket.emit('hostStartRoom', {'roomID': app.roomID});
 			},
-			roundStep: function() {
-				socket.emit('hostRoundStep', {'roomID': app.roomID, 'letter': app.letter});
+			roundCollect: function() {
+				socket.emit('hostRoundCollect', {'roomID': app.roomID, 'letter': app.letter});
 			}
 		};
 
@@ -86,19 +86,24 @@
 			view('lobby');
 		};
 
-		this.roundStep = function(event) {
+		this.roundCollect = function(event) {
 			if (app.step) {
 				document.querySelector('#round').className = 'round selected';
-				app.host.roundStep();
+				app.host.roundCollect();
 				app.step = false;
 			}
 		};
 		this.exitRoom = function() {
 			var playerName = app.playerName;
 			view('login', {'%playerName%': playerName, '%disabled%': ''});
+			document.querySelector('#round-complete').className = 'modal';
 			app.initData();
 			app.playerName = playerName;
-		}
+		};
+		this.restartRoom = function() {
+			document.querySelector('#round-complete').className = 'modal';
+			app.host.startRoom();
+		};
 
 
 		/* Events */
@@ -109,9 +114,11 @@
 			socket.on('joinedRoom', onJoinedRoom);
 			socket.on('youJoinedRoom', onYouJoinedRoom);
 
+			socket.on('roomStarted', onRoomStarted);
 			socket.on('roundStarted', onRoundStarted);
 			socket.on('roundComplete', onRoundComplete);
 			socket.on('roundFail', onRoundFail);
+			socket.on('roomFinished', onRoomFinished);
 		};
 
 		function onConnected(data) {
@@ -135,20 +142,39 @@
 			view('room', {'%roomID%': data.roomID, '%host%': ''});
 		};
 
+		function onRoomStarted(data) {
+			view('round');
+			var c = 2;
+
+			document.querySelector('#roundStarter').className = 'round-starter c3';
+
+			var starter = setInterval(function() {				
+					document.querySelector('#roundStarter').className = 'round-starter c'+ c--;
+					if (c < 0) clearInterval(starter);
+				}, 1000);
+		};
+
 		function onRoundStarted(data) {
 			app.letter = data.letter;
 			app.step = true;
-			view('round', {'%letter%': data.letter, '%host%': app.isHost?'show':''});
+			document.querySelector('#round').className = 'round';
+			document.querySelector('#roundLetter').innerHTML = data.letter;
+		};
+		function onRoundComplete(data) {
+			document.querySelector('#round').className = 'round success';
+			document.querySelector('#roundScore').innerHTML = data.score;
 		};
 
-		function onRoundComplete(data) {
+		function onRoomFinished(data) {
 			document.querySelector('#round-complete').className += ' show';
-			document.querySelector('#round-complete-word').innerHTML = data.word;
+			document.querySelector('#round-complete-score').innerHTML = data.score;
+			document.querySelector('#round-complete-count').innerHTML = data.count;
 
 		};
 
 		function onRoundFail(data) {
 			document.querySelector('#round').className = 'round failed';
+			document.querySelector('#roundScore').innerHTML = data.score;
 			app.step = true;
 
 			setTimeout(function() {
