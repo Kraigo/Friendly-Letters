@@ -1,7 +1,9 @@
 var fs = require('fs');
 
 var io;
-var words = {};
+var words = { 3: ['asd'], 2: ['as'], 1: ['a']};
+
+var rooms = {};
 
 exports.init = function(sio, socket) {
 	io = sio;
@@ -19,8 +21,9 @@ exports.init = function(sio, socket) {
 function hostCreateRoom(data) {
 	var roomID = ( Math.random() * 100000) | 0;
 
-	this.join(roomID.toString());
+	rooms[roomID] = {};
 
+	this.join(roomID.toString());
 	this.playerName = data.playerName;
 	this.emit('roomCreated', {'roomID': roomID, 'playerName': data.playerName});
 	this.emit('joinedRoom', {'roomID': roomID, 'playerName': data.playerName});
@@ -35,7 +38,7 @@ function hostJoinRoom(data) {
 		this.playerName = data.playerName;
 		this.join(data.roomID.toString());
 		this.emit('youJoinedRoom', {'roomID': data.roomID});
-		io.sockets.in(data.roomID).emit('joinedRoom', data);
+		io.in(data.roomID).emit('joinedRoom', data);
 		
 	}
 	else {
@@ -44,18 +47,17 @@ function hostJoinRoom(data) {
 };
 
 function hostStartRoom(data) {
-	var roomObj = io.sockets.in(data.roomID);
 
+	rooms[data.roomID].round = {};
+	rooms[data.roomID].round.currectWord = '';
+	rooms[data.roomID].round.shuffledWord = '';
+	rooms[data.roomID].round.collectedWord = '';
+	rooms[data.roomID].round.score = 0;
+	rooms[data.roomID].round.count = 0;
+	rooms[data.roomID].round.started = new Date();
 
-	roomObj.round = {};
-	roomObj.round.currectWord = '';
-	roomObj.round.shuffledWord = '';
-	roomObj.round.collectedWord = '';
-	roomObj.round.score = 0;
-	roomObj.round.count = 0;
-	roomObj.round.started = new Date();
+	io.in(data.roomID).emit('roomStarted', {'roomID': data.roomID});
 
-	io.sockets.in(data.roomID).emit('roomStarted', {'roomID': data.roomID})
 
 	hostStartRound(data);
 
@@ -64,7 +66,7 @@ function hostStartRoom(data) {
 function hostStartRound(data) {
 
 	var room = io.sockets.adapter.rooms[data.roomID],
-		round = io.sockets.in(data.roomID).round;
+		round = rooms[data.roomID].round;
 
 	if (!checkRoundTimout(data.roomID)) {
 		hostRoomFinished(data);
@@ -93,34 +95,37 @@ function hostStartRound(data) {
 
 	};
 
-	console.log("Room %s started. Source word is '%s'", data.roomID, round.correctWord);
+	console.log("The room %s guess the word '%s'", data.roomID, round.correctWord);
 };
 
 function hostRoundCollect(data) {
-	var round = io.sockets.in(data.roomID).round;
+	var round = rooms[data.roomID].round;
 	
 	round.collectedWord += data.letter;
 
 		if (round.correctWord.length == round.collectedWord.length) {
 			if (round.correctWord == round.collectedWord) {
 
-				round.score += 10;
+				round.score += 10 + round.correctWord.length;
 				io.sockets.in(data.roomID).emit('roundComplete', {'roomID': data.roomID, 'word': round.correctWord, 'score': round.score});
 				setTimeout(function() {
 					hostStartRound(data)
 				}, 1000);
 			} else {
 
-				round.score -= 5;
-				io.sockets.in(data.roomID).emit('roundFail', {'roomID': data.roomID, 'score': round.score});
+				round.score -= 5 + round.correctWord.length;
+				io.in(data.roomID).emit('roundFail', {'roomID': data.roomID, 'score': round.score});
 				round.collectedWord = '';
+				if (!checkRoundTimout(data.roomID)) {
+					hostRoomFinished(data);
+				}
 			}
 		}
 };
 
 function hostRoomFinished(data) {
-	var round = io.sockets.in(data.roomID).round;
-	io.sockets.in(data.roomID).emit('roomFinished', {'roomID': data.roomID, 'score': round.score, 'count': round.count});
+	var round = rooms[data.roomID].round;
+	io.in(data.roomID).emit('roomFinished', {'roomID': data.roomID, 'score': round.score, 'count': round.count});
 };
 
 
@@ -151,7 +156,7 @@ function shuffle(array) {
 }
 
 function checkRoundTimout(roomID) {
-	var started = io.sockets.in(roomID).round.started,
+	var started = rooms[roomID].round.started,
 		now = new Date,
 		duration = (now - started) / 1000 | 0;
 	return (duration < 63);

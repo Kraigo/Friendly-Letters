@@ -19,6 +19,7 @@
 			this.letter = '';
 			this.step = true;
 			this.isHost = false;
+			this.game = false;
 		};
 
 
@@ -129,6 +130,7 @@
 			app.roomID = data.roomID;
 			app.isHost = true;
 			view('room', {'%roomID%': app.roomID, '%host%': 'show'});
+			document.querySelector('#round-complete').className = 'modal';
 
 		};
 		function onJoinedRoom(data) {
@@ -145,7 +147,9 @@
 		function onRoomStarted(data) {
 			view('round');
 			var c = 2;
+			app.game = true;
 
+			document.querySelector('#round-complete').className = 'modal';
 			document.querySelector('#roundStarter').className = 'round-starter c3';
 
 			var starter = setInterval(function() {				
@@ -166,6 +170,7 @@
 		};
 
 		function onRoomFinished(data) {
+			app.game = false;
 			document.querySelector('#round-complete').className += ' show';
 			document.querySelector('#round-complete-score').innerHTML = data.score;
 			document.querySelector('#round-complete-count').innerHTML = data.count;
@@ -178,7 +183,8 @@
 			app.step = true;
 
 			setTimeout(function() {
-				document.querySelector('#round').className = 'round';
+				if (app.game)
+					document.querySelector('#round').className = 'round';
 			}, 1000)
 		};
 
