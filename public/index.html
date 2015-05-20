@@ -49,7 +49,7 @@
 	<script id="lobby-view" type="text/template">
 		<p class="text-center">Введите номер комнаты:</p>
 		<p>
-			<input type="text" class="input" placeholder="Введите номер" id="roomID"  onInput="app.validRoom(event)">
+			<input type="number" class="input" placeholder="Введите номер" id="roomID"  onInput="app.validRoom(event)">
 		</p>
 		<p id="room-control" class="disabled">
 			<button class="button button-green" onClick="app.host.joinRoom()">Подключиться</button>
