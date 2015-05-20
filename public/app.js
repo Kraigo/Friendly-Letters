@@ -114,6 +114,7 @@
 			socket.on('roomCreated', onRoomCreated);
 			socket.on('joinedRoom', onJoinedRoom);
 			socket.on('youJoinedRoom', onYouJoinedRoom);
+			socket.on('roomError', onRoomError);
 
 			socket.on('roomStarted', onRoomStarted);
 			socket.on('roundStarted', onRoundStarted);
@@ -143,6 +144,13 @@
 		function onYouJoinedRoom(data) {
 			view('room', {'%roomID%': data.roomID, '%host%': ''});
 		};
+		function onRoomError(data) {
+			console.log(data.text);
+			document.querySelector('.container').className = 'container error';
+			setTimeout(function() {
+				document.querySelector('.container').className = 'container';
+			}, 400);
+		}
 
 		function onRoomStarted(data) {
 			view('round');

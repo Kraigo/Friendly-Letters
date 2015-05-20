@@ -34,7 +34,7 @@ function hostCreateRoom(data) {
 function hostJoinRoom(data) {
 	var room = io.sockets.adapter.rooms[data.roomID];
 
-	if (room) {
+	if (room && !rooms[data.roomID].started) {
 		this.playerName = data.playerName;
 		this.join(data.roomID.toString());
 		this.emit('youJoinedRoom', {'roomID': data.roomID});
@@ -54,7 +54,7 @@ function hostStartRoom(data) {
 	rooms[data.roomID].round.collectedWord = '';
 	rooms[data.roomID].round.score = 0;
 	rooms[data.roomID].round.count = 0;
-	rooms[data.roomID].round.started = new Date();
+	rooms[data.roomID].started = new Date();
 
 	io.in(data.roomID).emit('roomStarted', {'roomID': data.roomID});
 
@@ -125,6 +125,8 @@ function hostRoundCollect(data) {
 
 function hostRoomFinished(data) {
 	var round = rooms[data.roomID].round;
+	round.started = false;
+
 	io.in(data.roomID).emit('roomFinished', {'roomID': data.roomID, 'score': round.score, 'count': round.count});
 };
 

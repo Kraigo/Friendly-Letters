@@ -31,9 +31,16 @@ body, html {
 	display: table;
 	background-color: #E8E8E8;
 	padding: 15px;
+	border: 5px solid transparent;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
+	-webkit-transition: all 0.2s ease;
+	-moz-transition: all 0.2s ease;
+	transition: all 0.2s ease;
+}
+.container.error {
+	border-color: #F15A5A;
 }
 .game {
 	display: table-cell;
@@ -54,6 +61,7 @@ body, html {
 	font-size: 1em;
 
 	-webkit-transition: all 0.2s ease;
+	-moz-transition: all 0.2s ease;
 	transition: all 0.2s ease;
 }
 .button-blue {background-color:#2D95BF;}
