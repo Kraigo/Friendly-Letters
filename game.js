@@ -42,6 +42,7 @@ function hostJoinRoom(data) {
 
 	if (room && !rooms[data.roomID].started) {
 		this.playerName = data.playerName;
+		this.joinedRoom = roomID;
 		this.join(data.roomID.toString());
 		this.emit('youJoinedRoom', {'roomID': data.roomID});
 		io.in(data.roomID).emit('joinedRoom', data);
@@ -71,14 +72,21 @@ function hostStartRoom(data) {
 
 function hostLeaveRoom(data) {
 	if (this.joinedRoom) {
+
+		console.log('%s leaved the Room %s.', this.playerName, this.joinedRoom);
 		
 		this.leave( this.joinedRoom );
 
 		if (!io.sockets.adapter.rooms[this.joinedRoom]) {
-			console.log('Room %s closed.', this.joinedRoom)			
+			console.log('Room %s closed.', this.joinedRoom);	
 			delete rooms[this.joinedRoom];
 			delete this.joinedRoom;
 		}
+
+		delete this.joinedRoom;
+
+		
+
 	}
 };
 
@@ -184,8 +192,8 @@ function checkRoundTimout(roomID) {
 }
 
 fs.readFile('./words.txt', {encoding: 'utf-8'}, function(err, data) {
-	data = data.replace(/^\uFEFF/, '');
-	var mas = data.split(', ')
+	// data = data.replace(/^\uFEFF/, '');
+	var mas = data.split(',')
 	for (var i = mas.length; i > 0; i--) {
 		var m = mas[i-1]
 
@@ -194,6 +202,8 @@ fs.readFile('./words.txt', {encoding: 'utf-8'}, function(err, data) {
 
 		words[m.length].push(m);
 	};
+
+	console.log(words);
 
 });
 
