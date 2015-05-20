@@ -42,7 +42,7 @@ function hostJoinRoom(data) {
 
 	if (room && !rooms[data.roomID].started) {
 		this.playerName = data.playerName;
-		this.joinedRoom = roomID;
+		this.joinedRoom = data.roomID;
 		this.join(data.roomID.toString());
 		this.emit('youJoinedRoom', {'roomID': data.roomID});
 		io.in(data.roomID).emit('joinedRoom', data);
@@ -202,8 +202,6 @@ fs.readFile('./words.txt', {encoding: 'utf-8'}, function(err, data) {
 
 		words[m.length].push(m);
 	};
-
-	console.log(words);
 
 });
 
