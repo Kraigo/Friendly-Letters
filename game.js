@@ -12,10 +12,15 @@ exports.init = function(sio, socket) {
 	socket.on('hostCreateRoom', hostCreateRoom);
 	socket.on('hostJoinRoom', hostJoinRoom);
 
-	socket.on('hostStartRoom', hostStartRoom);	
+	socket.on('hostStartRoom', hostStartRoom);
+	
 
 	socket.on('hostStartRound', hostStartRound);
 	socket.on('hostRoundCollect', hostRoundCollect);
+
+	socket.on('hostLeaveRoom', hostLeaveRoom);
+	socket.on('disconnect', hostLeaveRoom);
+
 };
 
 function hostCreateRoom(data) {
@@ -25,6 +30,7 @@ function hostCreateRoom(data) {
 
 	this.join(roomID.toString());
 	this.playerName = data.playerName;
+	this.joinedRoom = roomID;
 	this.emit('roomCreated', {'roomID': roomID, 'playerName': data.playerName});
 	this.emit('joinedRoom', {'roomID': roomID, 'playerName': data.playerName});
 	
@@ -61,6 +67,19 @@ function hostStartRoom(data) {
 
 	hostStartRound(data);
 
+};
+
+function hostLeaveRoom(data) {
+	if (this.joinedRoom) {
+		
+		this.leave( this.joinedRoom );
+
+		if (!io.sockets.adapter.rooms[this.joinedRoom]) {
+			console.log('Room %s closed.', this.joinedRoom)			
+			delete rooms[this.joinedRoom];
+			delete this.joinedRoom;
+		}
+	}
 };
 
 function hostStartRound(data) {

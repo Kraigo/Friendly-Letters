@@ -35,6 +35,9 @@
 			},
 			roundCollect: function() {
 				socket.emit('hostRoundCollect', {'roomID': app.roomID, 'letter': app.letter});
+			},
+			leaveRoom: function() {
+				socket.emit('hostLeaveRoom', {'roomID': app.roomID});
 			}
 		};
 
@@ -94,12 +97,13 @@
 				app.step = false;
 			}
 		};
-		this.exitRoom = function() {
+		this.exitRoom = function(leave) {
 			var playerName = app.playerName;
 			view('login', {'%playerName%': playerName, '%disabled%': ''});
 			document.querySelector('#round-complete').className = 'modal';
 			app.initData();
 			app.playerName = playerName;
+			app.host.leaveRoom();
 		};
 		this.restartRoom = function() {
 			document.querySelector('#round-complete').className = 'modal';
