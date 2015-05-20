@@ -1,13 +1,6 @@
-<<<<<<< HEAD
 {
 	"scripts": {
 	  "start": "node server.js"
 	},
 	"main": "server.js"
 }
-=======
-"scripts": {
-  "start": "node server.js"
-},
-"main": "server.js"
->>>>>>> origin/master
