@@ -125,7 +125,7 @@ function hostRoundCollect(data) {
 		if (round.correctWord.length == round.collectedWord.length) {
 			if (round.correctWord == round.collectedWord) {
 
-				round.score += 10 + round.correctWord.length;
+				round.score += 10 + round.correctWord.length * 2;
 				io.sockets.in(data.roomID).emit('roundComplete', {'roomID': data.roomID, 'word': round.correctWord, 'score': round.score});
 				setTimeout(function() {
 					hostStartRound(data)
@@ -177,7 +177,7 @@ function shuffle(array) {
 }
 
 function checkRoundTimout(roomID) {
-	var started = rooms[roomID].round.started,
+	var started = rooms[roomID].started,
 		now = new Date,
 		duration = (now - started) / 1000 | 0;
 	return (duration < 63);
