@@ -5,7 +5,7 @@ app = express();
 game = require('./game');
 app.use(express.static('public'));
 
-var server = require('http').createServer(app).listen(8080);
+var server = require('http').createServer(app).listen(80);
 var io = require('socket.io').listen(server);
 
 
