@@ -263,6 +263,7 @@ body, html {
 	text-align: center;
 	font-size: 7em;
 	-webkit-animation: counterFade 1s infinite;
+	-moz-animation: counterFade 1s infinite;
 	animation: counterFade 1s infinite;
 }
 .round-starter.c3:before {content: '3';}
@@ -283,6 +284,7 @@ body, html {
 	display: block;
 	background-color: #F15A5A;
 	-webkit-animation: timer 63s linear;
+	-moz-animation: timer 63s linear;
 	animation: timer 63s linear;
 
 }
@@ -291,10 +293,14 @@ body, html {
 @keyframes counterFade {
 	from {
 		opacity: 1;
+		-webkit-transform: scale(1);
+		-moz-transform: scale(1);
 		transform: scale(1);
 	}
 	to {
 		opacity: 0;
+		-webkit-transform: scale(2);
+		-moz-transform: scale(2);
 		transform: scale(2);
 	}
 }
@@ -306,6 +312,16 @@ body, html {
 	to {
 		opacity: 0;
 		-webkit-transform: scale(2);
+	}
+}
+@-moz-keyframes counterFade {
+	from {
+		opacity: 1;
+		-moz-transform: scale(1);
+	}
+	to {
+		opacity: 0;
+		-moz-transform: scale(2);
 	}
 }
 
@@ -320,6 +336,15 @@ body, html {
 	100% { background-color: #F15A5A; width: 100%; }
 }
 @-webkit-keyframes timer {
+	0%, 5% { background-color: transparent; width: 0; }
+	70% { background-color: #F0C419; }
+	85% { background-color: #F15A5A; }
+	90% { background-color: #F0C419; }
+	93% { background-color: #F15A5A; }
+	97% { background-color: #F0C419; }
+	100% { background-color: #F15A5A; width: 100%; }
+}
+@-moz-keyframes timer {
 	0%, 5% { background-color: transparent; width: 0; }
 	70% { background-color: #F0C419; }
 	85% { background-color: #F15A5A; }
