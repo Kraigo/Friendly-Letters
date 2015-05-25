@@ -2,7 +2,7 @@
 		app.init();
 	};
 
-	var socket = io.connect();
+	var socket = io.connect('ws://fl-kraigo.rhcloud.com:8000/');
 
 	var app = new function() {
 		var app = this;
