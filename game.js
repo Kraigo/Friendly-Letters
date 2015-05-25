@@ -4,10 +4,19 @@ var io;
 var words = { 3: ['asd'], 2: ['as'], 1: ['a']};
 
 var rooms = {};
+var stats = {
+	'roomsCreated': 0,
+	'roomsStarted': 0,
+	'clients': 0,
+	'bestScore': 0
+};
 
 exports.init = function(sio, socket) {
 	io = sio;
-	socket.emit('connected', {'text': 'You are connected!'});
+
+	stats.clients ++;
+
+	socket.emit('connected', {'text': 'You are connected!', 'stats': stats});
 
 	socket.on('hostCreateRoom', hostCreateRoom);
 	socket.on('hostJoinRoom', hostJoinRoom);
@@ -34,6 +43,7 @@ function hostCreateRoom(data) {
 	this.emit('roomCreated', {'roomID': roomID, 'playerName': data.playerName});
 	this.emit('joinedRoom', {'roomID': roomID, 'playerName': data.playerName});
 	
+	stats.roomsCreated ++;
 
 };
 
@@ -67,6 +77,8 @@ function hostStartRoom(data) {
 
 
 	hostStartRound(data);
+
+	stats.roomsStarted ++;
 
 };
 
@@ -153,6 +165,10 @@ function hostRoundCollect(data) {
 function hostRoomFinished(data) {
 	var round = rooms[data.roomID].round;
 	round.started = false;
+
+	if (round.score > stats.bestScore) {
+		stats.bestScore = round.score
+	}
 
 	io.in(data.roomID).emit('roomFinished', {'roomID': data.roomID, 'score': round.score, 'count': round.count});
 };
