@@ -5,4 +5,4 @@ Nodejs game for my practice.
 * express
 
 ## Video
-You can check gameplay on vimeo: [Friendly Letters](https://vimeo.com/128114003)
+You can check gameplay on vimeo: [Friendly Letters](https://vimeo.com/128420199)
